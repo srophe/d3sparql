@@ -1,5 +1,8 @@
 d3sparql.js
 ===========
+### Srophe version
+Used within eXistdb. Utilizes xquery to build and pass SPARQL query to SPARQL endpoint xslt to transform RDF to json.  
+
 
 JavaScript library for executing SPARQL query and transforming resulted JSON for visualization in D3.js.
 

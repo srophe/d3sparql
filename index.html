@@ -1,73 +1,154 @@
-<!DOCTYPE html>
-<meta charset="UTF-8">
-<title>d3sparql.js</title>
-<script src="lib/jquery/jquery.min.js"></script>
-<script src="lib/bootstrap/js/bootstrap.min.js"/></script>
-<link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-<script>
-function loadframe(html) {
-  $("#iframe").attr("src", html)
-    //.load(function() {
-    //  $(this).css("height", $(this).contents().height() + 100 + "px")
-    //})
-  $(window).scrollTop(0)
-}
-</script>
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <meta charset="UTF-8"/>
+    <title>d3sparql.js</title>
+    <link rel="stylesheet" type="text/css" href="$app-root/resources/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="relationships.css"/>
+    <link rel="stylesheet" href="$app-root/modules/d3xquery/pygment_trac.css"/>
+    <script src="//d3js.org/d3.v3.min.js"/>
+    <script src="d3sparql.js"/>
+    <script src="sankey.js"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
+    <script>
+            function exec() {
+              graphType = d3.select("#type").property("value");
+              var endpoint = d3.select("#endpoint").property("value")
+              sparql = d3.select("#sparql").property("value")
+              d3sparql.query(endpoint, sparql, graphType, render)
+            }
+            
+            function render(json) {
+              if(graphType === 'Bundle'){
+                  var config = {"selector": "#result"}
+                  d3sparql.bundle(json, config)
+              }else if(graphType === 'Table'){
+                  d3sparql.htmltable(json, config)
+              }else if(graphType === 'Scatterplot'){
+                  var config = {"selector": "#result"}
+                  d3sparql.scatterplot(json, config)
+                  d3sparql.htmltable(json)
+              }else if(graphType === 'Tree'){
+                  var config = {"selector": "#result"}
+                  d3sparql.treemap(json, config)
+              } else if(graphType === 'Sankey'){
+                  var config = {"selector": "#result"}
+                  d3sparql.sankey(json, config)
+              } else if(graphType === 'Circle Pack'){
+                 var config = {"selector": "#result"}
+                d3sparql.circlepack(json, config)
+              } else if(graphType === 'Bubble'){
+                  var config = {"selector": "#result"}
+                d3sparql.bubble(json, config)
+              }else{
+                 var config = {"selector": "#result"}
+                d3sparql.forcegraph(json, config)
+              }
+              //end render
+            }
+        
+            function exec_offline() {
+              d3.json("test.json", render)
+            }
+            
+            function toggle() {
+              d3sparql.toggle()
+            }
+    </script>
+    <style>
+      .bundle-node {
+                  font: 300 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+                  fill: #bbb;
+                }
+                
+                .bundle-node:hover {
+                  fill: #000;
+                }
+            
 
-<div class="navbar navbar-fixed-top navbar-inverse">
-  <div class="navbar-inner" style="padding-left: 20px">
-    <a class="brand" href="javascript:loadframe('d3sparql.html')"><i class="icon-th"></i> D3SPARQL</a>
-    <ul class="nav">
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Chart<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:loadframe('d3sparql-barchart.html')"><i class="icon-th-large"></i> d3barchart</a></li>
-          <li><a href="javascript:loadframe('d3sparql-piechart.html')"><i class="icon-th-large"></i> d3piechart</a></li>
-          <li><a href="javascript:loadframe('d3sparql-scatterplot.html')"><i class="icon-th-large"></i> d3scatterplot</a></li>
-        </ul>
-      </li>
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graph<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:loadframe('d3sparql-forcegraph.html')"><i class="icon-th-large"></i> d3forcegraph</a></li>
-          <li><a href="javascript:loadframe('d3sparql-sankey.html')"><i class="icon-th-large"></i> d3sankey</a></li>
-        </ul>
-      </li>
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tree<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:loadframe('d3sparql-roundtree.html')"><i class="icon-th-large"></i> d3roundtree</a></li>
-          <li><a href="javascript:loadframe('d3sparql-dendrogram.html')"><i class="icon-th-large"></i> d3dendrogram</a></li>
-          <li><a href="javascript:loadframe('d3sparql-treemap.html')"><i class="icon-th-large"></i> d3treemap</a></li>
-          <li><a href="javascript:loadframe('d3sparql-treemapzoom.html')"><i class="icon-th-large"></i> d3treemapzoom</a></li>
-          <li><a href="javascript:loadframe('d3sparql-sunburst.html')"><i class="icon-th-large"></i> d3sunburst</a></li>
-          <li><a href="javascript:loadframe('d3sparql-circlepack.html')"><i class="icon-th-large"></i> d3circlepack</a></li>
-        </ul>
-      </li>
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Map<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:loadframe('d3sparql-coordmap.html')"><i class="icon-th-large"></i> d3coordmap</a></li>
-          <li><a href="javascript:loadframe('d3sparql-namedmap.html')"><i class="icon-th-large"></i> d3namedmap</a></li>
-        </ul>
-      </li>
-      <li class="divider-vertical"></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Table<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:loadframe('d3sparql-htmltable.html')"><i class="icon-th-large"></i> d3htmltable</a></li>
-          <li><a href="javascript:loadframe('d3sparql-htmlhash.html')"><i class="icon-th-large"></i> d3htmlhash</a></li>
-        </ul>
-      </li>
-    </ul>
-    <a class="navbar-text pull-right" style="padding-right: 20px" href="http://github.com/ktym/d3sparql"><i class="icon-wrench"></i> GitHub</a>
-  </div>
-</div>
+               .bundle-link {
+                  stroke: steelblue;
+                  stroke-opacity: .4;
+                  fill: none;
+                  pointer-events: none;
+                }
 
-<div class="container" style="padding: 50px">
-<iframe id="iframe" src="d3sparql.html" width="100%" height="30000" scrolling="auto" frameborder="0" seamless></iframe>
-</div>
+                .bundle-node:hover,
+                .bundle-node--source,
+                .bundle-node--target {
+                  font-weight: 700;
+                }
+            
+                .bundle-node--source {
+                  fill: #ff7f0e;
+                }
+            
+                .bundle-node--target {
+                  fill: #1F77B4;
+                }
+            
+                .bundle-link--source,
+                .bundle-link--target {
+                  stroke-opacity: 1;
+                  stroke-width: 2px;
+                }
+                
+                .bundle-link--source {
+                  stroke: #ff7f0e;
+                }
+                
+                .bundle-link--target {
+                  stroke: #1F77B4;
+                }
+    </style>
+    <body>
+        <div id="query" style="margin: 10px">
+            <h1>Query Stardog</h1>
+            <form class="form-inline">
+                <div class="input-append">
+                    <div class="form-group">
+                        <label for="endpoint">SPARQL endpoint:&#160;</label>
+                        <input id="endpoint" style="width:400px;" value="http://dev-rdf.library.vanderbilt.edu/syriaca/query" type="text"/>&#160;
+                        <select id="type" name="type">
+                            <option id="force">Force</option>
+                            <option id="Sankey">Sankey</option>
+                            <option id="bundle">Bundle</option>
+                            <!--<option id="circlepack">Bubble</option>-->
+                            <option id="circlepack">Circle Pack</option>
+                            <!--<option id="tree">Tree</option>-->
+                            <option id="Tabel">Table</option>
+                            
+                            <!--
+                        <option id="tree">Tree</option>
+                        <option id="treezoom">Tree Zoom</option>
+                        
+                        <option id="roundtree">Round Tree</option>
+                        <option id="sunburst">Sunburst</option>
+                        <option id="scatterplot">Scatterplot</option>
+                        <option id="map">Map</option>
+                        -->
+                        </select> &#160;   
+                        <button class="btn btn-default" type="button" onclick="exec()">Query</button>&#160;
+                        <button class="btn btn-default" type="button" id="hide" onclick="toggle()">
+                            <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"/>
+                        </button>
+                    </div>
+                </div>
+                <textarea id="sparql" class="span9" rows="15" cols="150" name="sparql">
+                    <![CDATA[
+                prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                prefix owl: <http://www.w3.org/2002/07/owl#>
+                prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                
+                SELECT DISTINCT *
+                WHERE {
+                    ?uri a lawd:Place; rdfs:label ?label; dcterms:isPartOf ?rel . ?rel rdfs:label ?relName .
+                }
+                LIMIT 100
+                ]]></textarea>
+            </form>
+        </div>
+        <h2>Query Results</h2>
+        <div id="result"/>
+    </body>
+</html>
